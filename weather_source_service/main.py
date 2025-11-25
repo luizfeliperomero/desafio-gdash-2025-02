@@ -4,16 +4,20 @@ from dataclasses import dataclass
 from threading import Thread
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
+from confluent_kafka import Producer
 import requests
 import schedule
 import time
 import httpx
+import json
 
 app = FastAPI()
 
 origins = [
     "http://localhost",
     "http://localhost:5173",
+    "http://frontend:80",
+    "http://localhost:80",
 ]
 
 app.add_middleware(
@@ -23,6 +27,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+producer = Producer({
+    "bootstrap.servers": "kafka:29092",
+})
 
 @dataclass
 class Timestamps:
@@ -99,4 +107,11 @@ def get_weather(lat, lon):
 
     with httpx.Client(http2=True, timeout=10) as client:
         response = client.get(api_url)
+        payload = json.dumps(response.json()).encode("utf-8")
+        producer.produce(
+            "weather",
+            value=payload
+        )
+        producer.flush()
         return response.json()
+
