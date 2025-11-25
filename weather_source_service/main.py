@@ -3,11 +3,26 @@ from datetime import datetime, timedelta
 from dataclasses import dataclass
 from threading import Thread
 from pydantic import BaseModel
+from fastapi.middleware.cors import CORSMiddleware
 import requests
 import schedule
 import time
+import httpx
 
 app = FastAPI()
+
+origins = [
+    "http://localhost",
+    "http://localhost:5173",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @dataclass
 class Timestamps:
@@ -79,10 +94,9 @@ def manage_locations():
             job.last_fetched = now
             get_weather(lat, lon)
 
-    print(locations.keys())
-
 def get_weather(lat, lon):
-    api_url = f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current_weather=true"
-    response = requests.get(api_url)
-    data = response.json()
-    return {"data": data}
+    api_url = f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_2m,relative_humidity_2m,precipitation,weather_code,wind_speed_10m,is_day"
+
+    with httpx.Client(http2=True, timeout=10) as client:
+        response = client.get(api_url)
+        return response.json()
