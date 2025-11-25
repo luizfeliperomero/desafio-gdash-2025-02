@@ -1,18 +1,17 @@
 import './App.css'
-import { Button } from "@/components/ui/button"
 import { useEffect, useRef, useState } from "react"
 import mapboxgl from 'mapbox-gl'
 
-import InfoCard from './components/InfoCard.tsx'
-import { WeatherResponse } from './models/Weather.ts'
-import { getWeather } from './services/weatherService.ts'
+import InfoCard from '@/components/InfoCard.tsx'
+import type { WeatherResponse } from '@/models/Weather.ts'
+import { getWeather } from '@/services/weatherService.ts'
 
 
 function App() {
 	const mapContainerRef = useRef<HTMLDivElement | null>(null);
 
-	let [latitude, setLatitude]: num = useState<number>(40.79378421358858);
-	let [longitude, setLongitude]: num = useState<number>(-73.95754470213097);
+	let [latitude, setLatitude] = useState<number>(-26.83934485782777);
+	let [longitude, setLongitude] = useState<number>(-48.630748344525635);
 
 	mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_APIKEY;
 

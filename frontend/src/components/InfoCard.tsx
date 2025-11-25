@@ -1,7 +1,7 @@
 import { WMO_CODES } from '@/lib/wmo'
 import Color from "colorjs.io";
 
-import WeatherIcon from './WeatherIcon.tsx'
+import WeatherIcon from '@/components/WeatherIcon.tsx'
 
 type WeatherProps = {
   value: string | number;
