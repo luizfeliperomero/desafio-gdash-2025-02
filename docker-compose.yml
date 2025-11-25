@@ -1,0 +1,60 @@
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: react-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - weather_source 
+    networks:
+      - appnet
+
+  weather_source:
+    build:
+      context: ./weather_source_service
+      dockerfile: Dockerfile
+    container_name: weather-source-service 
+    ports:
+      - "8000:8000"
+    depends_on:
+      - kafka
+    networks:
+      - appnet
+
+  kafka:
+    image: apache/kafka:latest
+    container_name: kafka
+    user: root
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    environment:
+      - KAFKA_NODE_ID=1
+      - KAFKA_PROCESS_ROLES=broker,controller
+
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT,INTERNAL:PLAINTEXT
+      - KAFKA_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093,INTERNAL://:29092
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092,INTERNAL://kafka:29092
+
+      - KAFKA_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CONTROLLER_QUORUM_VOTERS=1@kafka:9093
+
+      - KAFKA_LOG_DIRS=/var/lib/kafka/data
+      - KAFKA_AUTO_CREATE_TOPICS_ENABLE=true
+
+      - KAFKA_CFG_share.coordinator.state.topic.replication.factor=1
+      - KAFKA_CFG_share.coordinator.state.topic.min.isr=1
+      - KAFKA_CFG_transaction.state.log.replication.factor=1
+      - KAFKA_CFG_transaction.state.log.min.isr=1
+      - KAFKA_CFG_offsets.topic.replication.factor=1
+      - KAFKA_CFG_offsets.topic.num.partitions=1
+
+    networks:
+      - appnet
+
+networks:
+  appnet:
+    driver: bridge
+
