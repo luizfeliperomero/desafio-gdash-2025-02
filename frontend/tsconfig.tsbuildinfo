@@ -1,0 +1,1 @@
+{"root":["./src/App.tsx","./src/main.tsx","./src/components/InfoCard.tsx","./src/components/WeatherIcon.tsx","./src/components/ui/button.tsx","./src/lib/utils.ts","./src/lib/wmo.ts","./src/models/Weather.ts","./src/services/weatherService.ts"],"errors":true,"version":"5.9.3"}
