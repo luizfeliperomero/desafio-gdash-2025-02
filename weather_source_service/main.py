@@ -29,7 +29,7 @@ app.add_middleware(
 )
 
 producer = Producer({
-    "bootstrap.servers": "kafka:29092",
+    "bootstrap.servers": "kafka:9092",
 })
 
 @dataclass
