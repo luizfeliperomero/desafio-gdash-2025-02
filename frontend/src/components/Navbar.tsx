@@ -34,12 +34,12 @@ function Navbar() {
 	    <nav
       className="
   fixed z-50 bg-[var(--navbar-bg)] p-3 flex
-  bottom-0 left-0 w-full h-16 flex-row justify-around items-center
-  md:top-0 md:left-0 md:w-20 md:h-full md:flex-col md:justify-center md:items-center
+  bottom-0 left-0 w-full h-16 flex-row justify-between justify-around items-center
+  md:top-0 md:left-0 md:w-20 md:h-full md:flex-col md:items-center
 "
       aria-label="Main navigation"
     >
-	<img src="logo.png" alt="Logo" />
+	<img src="logo.png" alt="Logo" className="h-10 w-auto md:h-16 object-contain" />
       <NavigationMenu>
         <NavigationMenuList className="flex md:flex-col gap-10 items-center">
           <NavigationMenuItem className="p-3">
