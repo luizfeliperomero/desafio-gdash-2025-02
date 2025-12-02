@@ -5,60 +5,47 @@ import InfoCard from '@/components/InfoCard.tsx'
 import InsightCard from '@/components/InsightCard.tsx'
 import type { WeatherResponse } from '@/models/Weather.interface.ts'
 import { getWeather } from '@/services/weatherService.ts'
-
+import { useOutletContext } from "react-router";
 
 function Home() {
 	const mapContainerRef = useRef<HTMLDivElement | null>(null);
-
-	let [latitude, setLatitude] = useState<number>(-26.83934485782777);
-	let [longitude, setLongitude] = useState<number>(-48.630748344525635);
-
 	mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_APIKEY;
-
 	const [weather, setWeather] = useState<WeatherResponse | null>(null);
+	const coords = useOutletContext();
 
 	useEffect(() => {
-		/*getWeather(latitude, longitude)	
-			.then((response) => {
-				setWeather(response);
-			}, (error) => {
-				console.log(error);
-			});*/
-				setWeather({
-				  current_weather: {
-					time: "2025-03-05T12:00",
-					interval: 900,
-					is_day: false,
-					temperature_2m: 26.4,
-					weather_code: 75,
-					wind_speed_10m: 5.2,
-					precipitation: 0.0,
-					relative_humidity_2m: 62,
-				  },
-				  current_weather_units: {
-					interval: "seconds",
-					is_day: "boolean",
-					temperature_2m: "°C",
-					time: "ISO8601",
-					weather_code: "WMO code",
-					wind_speed_10m: "m/s",
-					precipitation: "mm",
-					relative_humidity_2m: "%",
-				  }
+		if(coords.mock) {
+			setWeather({
+			  current_weather: {
+				time: "2025-03-05T12:00",
+				interval: 900,
+				is_day: false,
+				temperature_2m: 26.4,
+				weather_code: 75,
+				wind_speed_10m: 5.2,
+				precipitation: 0.0,
+				relative_humidity_2m: 62,
+			  },
+			  current_weather_units: {
+				interval: "seconds",
+				is_day: "boolean",
+				temperature_2m: "°C",
+				time: "ISO8601",
+				weather_code: "WMO code",
+				wind_speed_10m: "m/s",
+				precipitation: "mm",
+				relative_humidity_2m: "%",
+			  }
+			});
+		} else {
+			getWeather(coords.latitude, coords.longitude)	
+				.then((response) => {
+					setWeather(response);
+				}, (error) => {
+					setApiError("Couldn't get weather data");
 				});
-	}, [latitude, longitude]);
-
-	useEffect(() => {
-		navigator.geolocation.getCurrentPosition(
-			(position) => {
-				setLatitude(position.coords.latitude);
-				setLongitude(position.coords.longitude);
-			},
-			(error) => {
-				console.log(error)
-			}
-		)
-	}, []);
+		}
+	}, [coords.latitude, coords.longitude]);
 
 	useEffect(() => {
 		if(!weather) return;
@@ -72,7 +59,7 @@ function Home() {
 		const map = new mapboxgl.Map({
 			container: 'map',
 			style: style,
-			center: [longitude, latitude],
+			center: [coords.longitude, coords.latitude],
 			zoom: 12,
 		});
 	}

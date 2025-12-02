@@ -23,3 +23,11 @@ export async function getWeatherHistory(lat: number, lon: number): Promise<any> 
 		throw err;
 	}
 }
+
+export function sendHeartbeat(lat: number, lon: number) {
+	const api = import.meta.env.VITE_WEATHER_SOURCE_API_DEV;
+	axios.post<any>(`${api}`, {
+		latitude: lat,
+		longitude: lon
+	});
+}

@@ -15,59 +15,69 @@ import { WMO_CODES } from '@/lib/wmo'
 import { Weather } from "@/models/Weather.interface.ts"
 import { mockWeatherData } from "@/../mock-weather-data.ts"
 import { getCityFromCoords } from "@/services/locationService.ts"
+import { useOutletContext } from "react-router";
 
 function Dashboard() {
+	const coords = useOutletContext();
+	const [data, setData] = useState(
+	  coords.mock ? mockWeatherData : null
+	);
+
 	function formatDate(dateStr: string): string {
 	  const date = new Date(dateStr);
 
-	  const day = date.getDate();                          // 1
-	  const month = date.getMonth() + 1;                   // 12
-	  const year = date.getFullYear();                     // 2025
+	  const day = date.getDate();
+	  const month = date.getMonth() + 1;
+	  const year = date.getFullYear();
 
 	  const hours = date.getHours().toString().padStart(2, "0");
 	  const minutes = date.getMinutes().toString().padStart(2, "0");
 
+
 	  return `${day}/${month}/${year} ${hours}:${minutes}`;
 	}
 
-	const temperatureChartData = mockWeatherData.map((w) => ({
+	const temperatureChartData = data?.map((w) => ({
 	  name: formatDate(w.current.time),
 	  value: w.current.temperature_2m,
 	}));
 
-	const humidityData = mockWeatherData.map(w => ({
+	const humidityData = data?.map(w => ({
 	  name: formatDate(w.current.time),
 	  value: w.current.relative_humidity_2m,
 	}));
 
-	const windSpeedData = mockWeatherData.map(w => ({
+	const windSpeedData = data?.map(w => ({
 	  name: formatDate(w.current.time),
 	  value: w.current.wind_speed_10m,
 	}));
 
-	const precipitationData = mockWeatherData.map(w => ({
+	const precipitationData = data?.map(w => ({
 	  name: formatDate(w.current.time),
 	  value: w.current.precipitation
 	}));
 
-	const weatherCodeData = mockWeatherData.map(w => ({
+	const weatherCodeData = data?.map(w => ({
 	  name: formatDate(w.current.time),
 	  value: w.current.weather_code,
 	}));
 
-	const [city, setCity] = useState("");
-
+	const [city, setCity] = useState("São Paulo");
 
 	useEffect(() => {
-	  getCityFromCoords(mockWeatherData[0].latitude, mockWeatherData[0].longitude)
+	  if(coords.mock) return;
+
+	  getCityFromCoords(coords.lat, coords.lon)
 		.then(setCity)
 		.catch(() => setCity("Unknown"));
 	}, []);
 
 	useEffect(() => {
-		getWeatherHistory(-26.83934485782777, -48.630748344525635)
+		if(coords.mock) return;
+
+		getWeatherHistory(coords.lat, coords.lon)
 			.then((response) => {
-				console.log(response);
+				setData(response.data);
 			}, (error) => {
 				console.log(error);
 			})
@@ -165,11 +175,11 @@ function Dashboard() {
 		  </CardHeader>
 
 		  <div className="overflow-y-auto flex flex-wrap items-center gap-6 px-4">
-			{mockWeatherData.map((w) => (
+			{data?.map((w) => (
 			  <div key={w.current.time} className="flex flex-col items-center">
 				<img
 				  src={WMO_CODES[w.current.weather_code].icon}
-				  className="w-10 h-10"
+				  className="w-10 h-10 hover:scale-110"
 				/>
 				<span className="text-xs mt-2 text-muted-foreground">
 				  {formatDate(w.current.time)}

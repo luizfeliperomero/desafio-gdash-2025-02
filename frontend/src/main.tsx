@@ -6,6 +6,7 @@ import App from './App.tsx'
 import Home from '@/views/Home'
 import Dashboard from '@/views/Dashboard'
 import NotFound from '@/views/NotFound'
+import Settings from '@/views/Settings'
 
 const router = createBrowserRouter([
   {
@@ -17,6 +18,7 @@ const router = createBrowserRouter([
         element: <Home />
       },
 	  { path: "/dashboard", element: <Dashboard /> },
+	  { path: "/settings", element: <Settings /> },
 	  { path: "*", element: <NotFound />},
     ],
   },
