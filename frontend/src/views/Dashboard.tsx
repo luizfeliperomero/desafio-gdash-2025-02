@@ -15,7 +15,8 @@ import { WMO_CODES } from '@/lib/wmo'
 import { Weather } from "@/models/Weather.interface.ts"
 import { mockWeatherData } from "@/../mock-weather-data.ts"
 import { getCityFromCoords } from "@/services/locationService.ts"
-import { useOutletContext } from "react-router";
+import { useOutletContext } from "react-router"
+import { toast } from "sonner"
 
 function Dashboard() {
 	const coords = useOutletContext();
@@ -79,7 +80,7 @@ function Dashboard() {
 			.then((response) => {
 				setData(response.data);
 			}, (error) => {
-				console.log(error);
+				toast.error("Error: Couldn't get weather history");
 			})
 	}, []);
 

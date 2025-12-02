@@ -5,7 +5,8 @@ import InfoCard from '@/components/InfoCard.tsx'
 import InsightCard from '@/components/InsightCard.tsx'
 import type { WeatherResponse } from '@/models/Weather.interface.ts'
 import { getWeather } from '@/services/weatherService.ts'
-import { useOutletContext } from "react-router";
+import { useOutletContext } from "react-router"
+import { toast } from "sonner"
 
 function Home() {
 	const mapContainerRef = useRef<HTMLDivElement | null>(null);
@@ -42,7 +43,7 @@ function Home() {
 				.then((response) => {
 					setWeather(response);
 				}, (error) => {
-					setApiError("Couldn't get weather data");
+					toast.error("Error: Couldn't get weather data");
 				});
 		}
 	}, [coords.latitude, coords.longitude]);

@@ -3,6 +3,8 @@ import Navbar from "@/components/Navbar";
 import { Outlet, useLocation } from "react-router";
 import { useEffect, useState } from "react";
 import { sendHeartbeat } from "@/services/weatherService"
+import { Toaster } from "@/components/ui/sonner"
+import { toast } from "sonner"
 
 function App() {
   const location = useLocation();
@@ -27,7 +29,7 @@ function App() {
 				setLongitude(position.coords.longitude);
 			},
 			(error) => {
-				setGeoError("Could not get coordinates");
+				toast.error("Error: Couldn't get coordinates");
 			}
 		)
 	}, []);
@@ -46,6 +48,7 @@ function App() {
 
   return (
     <>
+	  <Toaster />
       <Navbar />
       <main className={`${isHome ? "" : "md:pl-20"}`}>
 		<Outlet context={{latitude, longitude, mock, setMock}} />
