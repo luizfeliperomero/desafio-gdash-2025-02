@@ -5,6 +5,7 @@ import './index.css'
 import App from './App.tsx'
 import Home from '@/views/Home'
 import Dashboard from '@/views/Dashboard'
+import NotFound from '@/views/NotFound'
 
 const router = createBrowserRouter([
   {
@@ -15,7 +16,8 @@ const router = createBrowserRouter([
         index: true,
         element: <Home />
       },
-	  {path: "/dashboard", element: <Dashboard />}
+	  { path: "/dashboard", element: <Dashboard /> },
+	  { path: "*", element: <NotFound />},
     ],
   },
 ]);
