@@ -74,7 +74,7 @@ function Dashboard() {
 	}, []);
 
 	return (
-		<div className="relative z-0 flex flex-col gap-6 p-6 pb-24 w-full min-h-screen bg-gray-100">
+		<div className="relative z-0 flex flex-col gap-6 p-6 pb-24 w-full min-h-screen bg-background">
 		<h1 className="font-bold">Dashboard - {city}</h1>
       <div className="flex flex-wrap gap-6 w-full">
         <Card className="p-4 flex-1 min-w-[280px]">
