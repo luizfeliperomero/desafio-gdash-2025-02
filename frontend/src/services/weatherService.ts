@@ -14,3 +14,12 @@ export async function getWeather(lat: number, lon: number): Promise<WeatherRespo
 		throw err;
 	}
 }
+
+export async function getWeatherHistory(lat: number, lon: number): Promise<any> {
+	const api = import.meta.env.VITE_WEATHER_SERVICE_API_DEV;
+	try {
+		return await axios.get<any>(`${api}?lat=${lat}&lon=${lon}`);
+	} catch(err) {
+		throw err;
+	}
+}

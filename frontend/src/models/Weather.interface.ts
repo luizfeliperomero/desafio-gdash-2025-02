@@ -25,3 +25,15 @@ export interface WeatherResponse {
 	current_weather: CurrentWeather,	
 	current_weather_units: CurrentWeatherUnits,
 }
+
+export interface Weather {
+  latitude: number;
+  longitude: number;
+  generationtime_ms: number;
+  utc_offset_seconds: number;
+  timezone: string;
+  timezone_abbreviation: string;
+  elevation: number;
+  current_units: CurrentWeatherUnits;
+  current: CurrentWeather;
+}
