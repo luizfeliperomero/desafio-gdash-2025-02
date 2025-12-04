@@ -4,7 +4,7 @@ import mapboxgl from 'mapbox-gl'
 import InfoCard from '@/components/InfoCard.tsx'
 import InsightCard from '@/components/InsightCard.tsx'
 import type { WeatherResponse } from '@/models/Weather.interface.ts'
-import { getWeather } from '@/services/weatherService.ts'
+import { getWeather, getInsight } from '@/services/weatherService.ts'
 import { useOutletContext } from "react-router"
 import { toast } from "sonner"
 
@@ -13,6 +13,19 @@ function Home() {
 	mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_APIKEY;
 	const [weather, setWeather] = useState<WeatherResponse | null>(null);
 	const coords = useOutletContext();
+	const [insight, setInsight] = useState<string | null>(null);
+
+	useEffect(() =>{
+		if(coords.mock)	{
+			setInsight("Here goes the AI-generated insight text");
+		} else {
+			getInsight(coords.latitude, coords.longitude).then((insight) => {
+				setInsight(insight.data)	;
+			}, (error) => {
+				toast.error("Error: Couldn't get AI insight");
+			});
+		}
+	},[]);
 
 	useEffect(() => {
 		if(coords.mock) {
@@ -87,7 +100,7 @@ function Home() {
 							weathercode={102}
 						/>
 					</div>
-					<InsightCard />
+					{insight && <InsightCard insight={insight} />}
 				</div> )}
 				<div id="map" ref={mapContainerRef} className="fixed h-screen w-screen z-0"></div>
 			</div>

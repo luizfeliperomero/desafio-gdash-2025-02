@@ -67,6 +67,8 @@ services:
     depends_on:
       kafka:
         condition: service_healthy
+      weather_source:
+        condition: service_started
     networks:
       - appnet
 
@@ -74,11 +76,24 @@ services:
     build:
       context: ./weather_service
       dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - DB_URL_PROD=mongodb://mongo:27017/weather
+      # SET YOUR OPENAI_API_KEY: https://platform.openai.com/api-keys
+      - OPENAI_API_KEY=
     depends_on:
       kafka:
         condition: service_healthy
       mongo:
         condition: service_started
+    networks:
+      - appnet
+  redis:
+    image: redis:alpine3.22
+    container_name: redis
+    ports:
+      - "6379:6379"
     networks:
       - appnet
   mongo:

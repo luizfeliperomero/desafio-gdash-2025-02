@@ -31,3 +31,34 @@ export function sendHeartbeat(lat: number, lon: number) {
 		longitude: lon
 	});
 }
+
+export async function getInsight(lat: number, lon: number) {
+	const api = import.meta.env.VITE_WEATHER_SERVICE_API_DEV;
+	try {
+		return await axios.get<any>(`${api}/insight?lat=${lat}&lon=${lon}`);
+	} catch(err) {
+		throw err;
+	}
+}
+
+export async function getCSV() {
+	const api = import.meta.env.VITE_WEATHER_SERVICE_API_DEV;
+	try {
+		return await axios.get<any>(`${api}/csv`, {
+			responseType: "blob",
+		});
+	} catch(err) {
+		throw err;
+	}
+}
+
+export async function getXLSX() {
+	const api = import.meta.env.VITE_WEATHER_SERVICE_API_DEV;
+	try {
+		return await axios.get<any>(`${api}/xlsx`, {
+			responseType: "blob",
+		});
+	} catch(err) {
+		throw err;
+	}
+}

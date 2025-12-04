@@ -1,6 +1,6 @@
 import { Sparkles } from "lucide-react"
 
-function InsightCard() {
+function InsightCard({ insight }) {
 	return (
 		<div className="max-w-xl mx-auto p-6 rounded-xl shadow-lg 
                 bg-white/70 backdrop-blur-md border border-gray-200 
@@ -12,9 +12,7 @@ function InsightCard() {
 			  <Sparkles className="w-5 h-5 text-purple-600"/>
 		  </div>
 
-		  <p className="leading-relaxed text-sm">
-			Here goes the AI-generated insight text.
-		  </p>
+		  <p className="leading-relaxed text-sm">{insight}</p>
 		</div>
 	)
 }

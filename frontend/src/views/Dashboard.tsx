@@ -10,12 +10,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { getWeatherHistory } from '@/services/weatherService.ts'
+import WeatherTable from "@/components/WeatherTable"
+import { getWeatherHistory, getCSV, getXLSX } from '@/services/weatherService.ts'
+import { Table as TableIcon, FileSpreadsheet, FileX, ChartNoAxesCombined } from "lucide-react"
 import { WMO_CODES } from '@/lib/wmo'
 import { Weather } from "@/models/Weather.interface.ts"
 import { mockWeatherData } from "@/../mock-weather-data.ts"
 import { getCityFromCoords } from "@/services/locationService.ts"
 import { useOutletContext } from "react-router"
+import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
 
 function Dashboard() {
@@ -23,6 +26,8 @@ function Dashboard() {
 	const [data, setData] = useState(
 	  coords.mock ? mockWeatherData : null
 	);
+
+	const [viewTable, setViewTable] = useState<boolean>(false);
 
 	function formatDate(dateStr: string): string {
 	  const date = new Date(dateStr);
@@ -36,6 +41,56 @@ function Dashboard() {
 
 
 	  return `${day}/${month}/${year} ${hours}:${minutes}`;
+	}
+
+	async function downloadCSV() {
+	  const res = await getCSV();
+
+	  const disposition = res.headers["content-disposition"];
+	  let filename = "weather.csv";
+
+	  if (disposition) {
+		const match = disposition.match(/filename="(.+)"/);
+		if (match && match[1]) filename = match[1];
+	  }
+
+	  const url = window.URL.createObjectURL(
+		new Blob([res.data], { type: "text/csv" })
+	  );
+
+	  const link = document.createElement("a");
+	  link.href = url;
+	  link.download = filename;
+	  link.click();
+
+	  window.URL.revokeObjectURL(url);
+	}
+
+	async function downloadXLSX() {
+	  const res = await getXLSX();
+
+	  const disposition = res.headers["content-disposition"];
+	  let filename = "weather.xlsx";
+
+	  if (disposition) {
+		const match = disposition.match(/filename="(.+)"/);
+		if (match?.[1]) {
+		  filename = match[1];
+		}
+	  }
+
+	  const blob = new Blob([res.data], {
+		type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+	  });
+
+	  const url = window.URL.createObjectURL(blob);
+
+	  const link = document.createElement("a");
+	  link.href = url;
+	  link.download = filename;
+	  link.click();
+
+	  window.URL.revokeObjectURL(url);
 	}
 
 	const temperatureChartData = data?.map((w) => ({
@@ -68,7 +123,7 @@ function Dashboard() {
 	useEffect(() => {
 	  if(coords.mock) return;
 
-	  getCityFromCoords(coords.lat, coords.lon)
+	  getCityFromCoords(coords.latitude, coords.longitude)
 		.then(setCity)
 		.catch(() => setCity("Unknown"));
 	}, []);
@@ -76,7 +131,7 @@ function Dashboard() {
 	useEffect(() => {
 		if(coords.mock) return;
 
-		getWeatherHistory(coords.lat, coords.lon)
+		getWeatherHistory(coords.latitude, coords.longitude)
 			.then((response) => {
 				setData(response.data);
 			}, (error) => {
@@ -86,8 +141,27 @@ function Dashboard() {
 
 	return (
 		<div className="relative z-0 flex flex-col gap-6 p-6 pb-24 w-full min-h-screen bg-background">
-		<h1 className="font-bold">Dashboard - {city}</h1>
-      <div className="flex flex-wrap gap-6 w-full">
+		<div className="flex items-center flex-col gap-5 md:gap-0 md:flex-row md:justify-between">
+			<h1 className="font-bold">Dashboard - {city}</h1>
+			<div className="flex items-center gap-2 md:gap-5">
+				<Button onClick={() => setViewTable(!viewTable)} variant="outline" size="sm">
+				  <div className="flex items-center gap-2">
+				  {viewTable ? <ChartNoAxesCombined /> : <TableIcon />}
+					{viewTable ? "View Charts" : "View Table"}
+				  </div>
+				</Button>
+				<Button onClick={downloadCSV} variant="outline" size="sm">	
+					<FileSpreadsheet /> Export CSV 
+				</Button>
+				<Button onClick={downloadXLSX} variant="outline" size="sm">	
+					<FileX /> Export XLSX 
+				</Button>
+			</div>
+		</div>
+		{
+		!viewTable ? (
+			<>
+		<div className="flex flex-wrap gap-6 w-full">
         <Card className="p-4 flex-1 min-w-[280px]">
           <CardHeader>
             <CardTitle>Temperature</CardTitle>
@@ -190,7 +264,11 @@ function Dashboard() {
 		  </div>
 		</Card>
       </div>
-    </div>
+	        </>
+    ) : (
+      <WeatherTable data={data} />
+    )}
+</div>
 	)
 }
 

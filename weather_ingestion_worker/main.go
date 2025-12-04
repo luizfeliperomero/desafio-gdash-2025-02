@@ -32,7 +32,7 @@ func main() {
         kgo.SeedBrokers(brokers...),
 		kgo.ConsumerGroup("weather-worker-group"),
         kgo.ConsumeTopics(topic),
-		kgo.ConsumeResetOffset(kgo.NewOffset().AtEnd()),
+		kgo.ConsumeResetOffset(kgo.NewOffset().AtStart()),
     )
     if err != nil {
         log.Fatalf("unable to create kafka client: %v", err)
