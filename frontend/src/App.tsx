@@ -21,7 +21,11 @@ function App() {
   }, []);
 
 	useEffect(() => {
-		if(mock) return;
+		if(mock) {
+			setLatitude(-23.550520);
+			setLongitude(-46.633308);
+			return;
+		}
 
 		navigator.geolocation.getCurrentPosition(
 			(position) => {
