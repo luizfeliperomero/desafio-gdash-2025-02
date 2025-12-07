@@ -12,3 +12,6 @@ docker compose up
 Acesse a aplicação no seu navegador em: http://localhost:80
 
 ![test2](./images/weather_gdash_2.PNG)
+
+# Vídeo
+https://www.youtube.com/watch?v=4dvO0yI6m04
